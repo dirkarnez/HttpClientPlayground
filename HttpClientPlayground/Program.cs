@@ -1,22 +1,33 @@
-// HttpClient is intended to be instantiated once per application, rather than per-use. See Remarks.
-static readonly HttpClient client = new HttpClient();
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
-static async Task Main()
+namespace HttpClientPlayground
 {
-  // Call asynchronous network methods in a try/catch block to handle exceptions.
-  try	
-  {
-     HttpResponseMessage response = await client.GetAsync("http://www.contoso.com/");
-     response.EnsureSuccessStatusCode();
-     string responseBody = await response.Content.ReadAsStringAsync();
-     // Above three lines can be replaced with new helper method below
-     // string responseBody = await client.GetStringAsync(uri);
+    class Program
+    {
+        // HttpClient is intended to be instantiated once per application, rather than per-use. See Remarks.
+        static readonly HttpClient client = new HttpClient();
 
-     Console.WriteLine(responseBody);
-  }
-  catch(HttpRequestException e)
-  {
-     Console.WriteLine("\nException Caught!");	
-     Console.WriteLine("Message :{0} ",e.Message);
-  }
+        static void Main(string[] args)
+        {
+            Console.WriteLine(GetSomeString("1").Result);
+            Console.ReadLine();
+        }
+
+        static async Task<string> GetSomeString(string placeholder)
+        {
+            try
+            {
+                return await client.GetStringAsync($"https://jsonplaceholder.typicode.com/todos/{placeholder}");
+            }
+            catch (HttpRequestException)
+            {
+                return string.Empty;
+            }
+        }
+    }
 }
